@@ -125,7 +125,10 @@ int main(void) {
 
         snake_clear_tail(head, length);
         cell_draw(head->x, head->y);
+
+        gfx_SetColor(253);
         cell_draw(apple.x, apple.y);
+        gfx_SetColor(0);
 
         gfx_SwapDraw();
 
@@ -153,11 +156,7 @@ void snake_clear_tail(Segment *head, int length) {
 
     /* Set color to white before drawing, then revert */
     gfx_SetColor(255);
-    for (i = tail->x * TILE_WIDTH; i < (tail->x + 1) * TILE_WIDTH; i++) {
-        for (j = tail->y * TILE_HEIGHT; j < (tail->y + 1) * TILE_HEIGHT; j++) {
-            gfx_SetPixel(i, j);
-        }
-    }
+    cell_draw(tail->x, tail->y);
     gfx_SetColor(0);
 }
 
