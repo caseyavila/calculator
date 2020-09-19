@@ -7,8 +7,8 @@
 
 NAME        ?= SNAKE
 COMPRESSED  ?= NO
-ICON        ?= icon.png
-DESCRIPTION ?= "Dead-simple snake"
+#ICON        ?= icon.png
+DESCRIPTION ?= "ya know... snake"
 
 # ----------------------------
 # Other Options (Advanced)
@@ -18,7 +18,7 @@ DESCRIPTION ?= "Dead-simple snake"
 #USE_FLASH_FUNCTIONS ?= YES|NO
 #OUTPUT_MAP          ?= YES|NO
 #ARCHIVED            ?= YES|NO
-#OPT_MODE            ?= -optsize|-optspeed
+OPT_MODE            ?= -optspeed
 #SRCDIR              ?= src
 #OBJDIR              ?= obj
 #BINDIR              ?= bin
