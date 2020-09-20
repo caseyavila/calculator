@@ -1,5 +1,5 @@
 # calculator
-Programs for the TI-84 Plus CE
+Programs for the TI-84 Plus CE graphing calculator
 
 ## Programs
 
