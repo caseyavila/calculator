@@ -45,6 +45,8 @@ int main(void) {
     head->y = 0;
     head->next = NULL;
 
+    srand(rtc_Time());
+
     gfx_Begin();
     gfx_SetDrawBuffer();
     gfx_SetColor(100);
@@ -213,8 +215,6 @@ int is_snake(int x, int y) {
 
 Apple apple_spawn() {
     Apple apple_new;
-
-    srand(rtc_Time());
 
     /* If the apple spawns inside the snake, try again */
     do {
