@@ -14,7 +14,7 @@ DESCRIPTION ?= "ya know... snake"
 # Other Options (Advanced)
 # ----------------------------
 
-#EXTRA_CFLAGS        ?=
+EXTRA_CFLAGS        ?= -pedantic
 #USE_FLASH_FUNCTIONS ?= YES|NO
 #OUTPUT_MAP          ?= YES|NO
 #ARCHIVED            ?= YES|NO

@@ -214,9 +214,10 @@ int is_snake(int x, int y) {
 Apple apple_spawn() {
     Apple apple_new;
 
-    do {
-        srand(rtc_Time());
+    srand(rtc_Time());
 
+    /* If the apple spawns inside the snake, try again */
+    do {
         apple_new.x = randInt(0, (LCD_WIDTH / TILE_WIDTH) - 1);
         apple_new.y = randInt(0, (LCD_HEIGHT / TILE_HEIGHT) - 1);
     } while (is_snake(apple_new.x, apple_new.y));
