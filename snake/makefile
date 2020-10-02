@@ -14,11 +14,11 @@ DESCRIPTION ?= "ya know... snake"
 # Other Options (Advanced)
 # ----------------------------
 
-EXTRA_CFLAGS        ?= -pedantic
+EXTRA_CFLAGS        ?= -pedantic -std=c89
 #USE_FLASH_FUNCTIONS ?= YES|NO
 #OUTPUT_MAP          ?= YES|NO
 #ARCHIVED            ?= YES|NO
-OPT_MODE            ?= -optspeed
+OPT_MODE            ?= -Os
 #SRCDIR              ?= src
 #OBJDIR              ?= obj
 #BINDIR              ?= bin
