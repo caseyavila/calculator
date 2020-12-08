@@ -25,4 +25,4 @@ OPT_MODE            ?= -Os
 #GFXDIR              ?= src/gfx
 #V                   ?= 1
 
-include $(CEDEV)/include/.makefile
+include $(CEDEV)/meta/makefile.mk

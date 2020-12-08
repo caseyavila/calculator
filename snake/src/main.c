@@ -2,18 +2,16 @@
 #include <graphx.h>
 #include <stdlib.h>
 
-int TILE_WIDTH = 8;
-int TILE_HEIGHT = 8;
+#define TILE_WIDTH 8
+#define TILE_HEIGHT 8
+#define SNAKE_COLOR 102
+#define APPLE_COLOR 224
 
 /* Linked list-like structure for segments in snake */
 typedef struct Segment {
     int x, y;
     struct Segment *next;
 } Segment;
-
-typedef struct Apple {
-    int x, y;
-} Apple;
 
 enum Direction {
     UP,
@@ -22,39 +20,40 @@ enum Direction {
     LEFT
 };
 
-void cell_draw(int x, int y);
-void snake_clear_tail();
-Segment* snake_get_tail();
-Segment* snake_head_prepend(int x, int y);
-int is_snake(int x, int y);
-Apple apple_spawn();
+typedef struct Apple {
+    int x, y;
+} Apple;
 
-Segment *head;
-Apple apple;
-int length = 0;
-int gameOver = 0;
-enum Direction direction = RIGHT;
+void cell_draw(int x, int y);
+int snake_prepend(Segment **snake, enum Direction direction, Apple *apple);
+void snake_remove(Segment *snake);
+int is_snake(Segment *snake, int x, int y);
+void apple_spawn(Segment *snake, Apple *apple);
 
 int main(void) {
-
+    int game_over = 0;
     sk_key_t key;
-    int draws = 0;
+    Segment *snake = (Segment *) malloc(sizeof(Segment));
+    enum Direction direction = RIGHT;
+    Apple apple;
 
-    head = (Segment*)malloc(sizeof(Segment));
-    head->x = 0;
-    head->y = 0;
-    head->next = NULL;
+    snake->x = 0;
+    snake->y = 0;
+    snake->next = NULL;
 
     srand(rtc_Time());
 
     gfx_Begin();
-    gfx_SetDrawBuffer();
-    gfx_SetColor(100);
+    gfx_ZeroScreen();
+    gfx_SetColor(SNAKE_COLOR);
 
-    while(!gameOver) {
+    apple_spawn(snake, &apple);
+    snake_prepend(&snake, direction, &apple);
+
+    while (!game_over) {
         key = os_GetCSC();
 
-        switch(key) {
+        switch (key) {
             case sk_Up:
                 if (direction != DOWN) {
                     direction = UP;
@@ -81,46 +80,24 @@ int main(void) {
 
             case sk_Enter:
             case sk_Clear:
-                gameOver = 1;
-                break;
-
-            default:
+                game_over = 1;
                 break;
         }
 
-        /* Move the snake every four screen draws */
-        if (draws % 4 == 0) {
-            head = snake_head_prepend(head->x, head->y);
-
-            /* Increase the snake's length on the first move */
-            if (length < 1) {
-                apple = apple_spawn();
-                length++;
-            }
-            
-            if (head->x == apple.x && head->y == apple.y) {
-                length++;
-                apple = apple_spawn();
-            }
-
-            /* Assign new tail and deallocate memory for previous tail */
-            free(snake_get_tail(head, length)->next);
-            snake_get_tail(head, length)->next = NULL;
-
-            /* Reset draw counter to prevent an integer overflow */
-            draws = 0;
+        switch (snake_prepend(&snake, direction, &apple)) {
+            case 0:
+                snake_remove(snake);
+                break;
+            case 1:
+                game_over = 1;
+                break;
+            case 2:
+                apple_spawn(snake, &apple);
+                break;
         }
 
-        draws++;
-
-        snake_clear_tail(head, length);
-        cell_draw(head->x, head->y);
-
-        gfx_SetColor(200);
-        cell_draw(apple.x, apple.y);
-        gfx_SetColor(255);
-
-        gfx_SwapDraw();
+        delay(45);
+        cell_draw(snake->x, snake->y);
 
     }
 
@@ -138,90 +115,86 @@ void cell_draw(int x, int y) {
     }
 }
 
-void snake_clear_tail() {
-    /* Set color to background color before drawing */
-    gfx_SetColor(255);
-    cell_draw(snake_get_tail(head, length)->x, snake_get_tail(head, length)->y);
-    gfx_SetColor(100);
-}
-
-Segment* snake_get_tail() {
-    Segment *current = head;
-    int i;
-
-    /* Traverse the linked list depending on length */
-    for (i = 0; i < length; i++) {
-        current = current->next;
-    }
-    
-    return current;
-}
-
-Segment* snake_head_prepend(int x, int y) {
-    Segment *new_segment = (Segment*)malloc(sizeof(Segment));
+int snake_prepend(Segment **snake, enum Direction direction, Apple *apple) {
+    Segment *new_segment = (Segment *) malloc(sizeof(Segment));
 
     switch (direction) {
-        case(UP):
-            new_segment->x = x;
-            new_segment->y = y - 1;
-            break;
-        
-        case(DOWN):
-            new_segment->x = x;
-            new_segment->y = y + 1;
+        case UP:
+            new_segment->x = (*snake)->x;
+            new_segment->y = (*snake)->y - 1;
             break;
 
-        case(LEFT):
-            new_segment->x = x - 1;
-            new_segment->y = y;
+        case DOWN:
+            new_segment->x = (*snake)->x;
+            new_segment->y = (*snake)->y + 1;
             break;
 
-        case(RIGHT):
-            new_segment->x = x + 1;
-            new_segment->y = y;
+        case LEFT:
+            new_segment->x = (*snake)->x - 1;
+            new_segment->y = (*snake)->y;
+            break;
+
+        case RIGHT:
+            new_segment->x = (*snake)->x + 1;
+            new_segment->y = (*snake)->y;
             break;
     }
 
-    /* If snake is either intersecting or out of bounds */
-    if (is_snake(new_segment->x, new_segment->y) ||
+    if (is_snake(*snake, new_segment->x, new_segment->y) ||
             new_segment->x > (LCD_WIDTH / TILE_WIDTH) - 1 ||
             new_segment->y > (LCD_HEIGHT / TILE_HEIGHT) - 1 ||
             new_segment->x < 0 ||
             new_segment->y < 0)
         {
-
-        gameOver = 1;
+        return 1;
     }
 
-    new_segment->next = head;
+    new_segment->next = *snake;
+    *snake = new_segment;
 
-    return new_segment;
-}
-
-/* Check if the current coordinate is occupied by the snake */
-int is_snake(int x, int y) {
-    Segment *current = head;
-    int i;
-
-    for (i = 0; i < length - 1; i++) {
-        if (current->x == x && current->y == y) {
-            return 1;
-        }
-        current = current->next;
+    if (new_segment->x == apple->x && new_segment->y == apple->y) {
+        return 2;
     }
 
     return 0;
 }
 
-Apple apple_spawn() {
-    Apple apple_new;
+void snake_remove(Segment *snake) {
+    Segment *pointer = snake;
 
-    /* If the apple spawns inside the snake, try again */
-    do {
-        apple_new.x = randInt(0, (LCD_WIDTH / TILE_WIDTH) - 1);
-        apple_new.y = randInt(0, (LCD_HEIGHT / TILE_HEIGHT) - 1);
-    } while (is_snake(apple_new.x, apple_new.y));
+    while (pointer->next->next != NULL) {
+        pointer = pointer->next;
+    }
 
-    return apple_new;
+    gfx_SetColor(0);
+    cell_draw(pointer->next->x, pointer->next->y);
+    gfx_SetColor(SNAKE_COLOR);
+
+    free(pointer->next);
+    pointer->next = NULL;
 }
 
+int is_snake(Segment *snake, int x, int y) {
+    Segment *pointer = snake;
+
+    while (pointer->next != NULL) {
+        if (pointer->x == x && pointer->y == y) {
+            return 1;
+        }
+
+        pointer = pointer->next;
+    }
+
+    return 0;
+}
+
+void apple_spawn(Segment *snake, Apple *apple) {
+    do {
+        apple->x = randInt(0, (LCD_WIDTH / TILE_WIDTH) - 1);
+        apple->y = randInt(0, (LCD_HEIGHT / TILE_HEIGHT) - 1);
+    } while (is_snake(snake, apple->x, apple->y));
+
+    gfx_SetColor(APPLE_COLOR);
+    cell_draw(apple->x, apple->y);
+    gfx_SetColor(SNAKE_COLOR);
+}
