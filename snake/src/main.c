@@ -48,9 +48,9 @@ int main(void) {
     gfx_SetColor(SNAKE_COLOR);
 
     apple_spawn(snake, &apple);
-    snake_prepend(&snake, direction, &apple);
 
     while (!game_over) {
+        delay(45);
         key = os_GetCSC();
 
         switch (key) {
@@ -96,9 +96,7 @@ int main(void) {
                 break;
         }
 
-        delay(45);
         cell_draw(snake->x, snake->y);
-
     }
 
     gfx_End();
