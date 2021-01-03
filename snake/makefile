@@ -1,28 +1,21 @@
 # ----------------------------
-# Set NAME to the program name
-# Set ICON to the png icon file name
-# Set DESCRIPTION to display within a compatible shell
-# Set COMPRESSED to "YES" to create a compressed program
+# Makefile Options
 # ----------------------------
 
-NAME        ?= SNAKE
-COMPRESSED  ?= NO
-#ICON        ?= icon.png
+NAME ?= DEMO
+ICON ?= icon.png
 DESCRIPTION ?= "ya know... snake"
+COMPRESSED ?= NO
+ARCHIVED ?= NO
+
+CFLAGS ?= -Wall -Wextra -Oz -std=c89
+CXXFLAGS ?= -Wall -Wextra -Oz
 
 # ----------------------------
-# Other Options (Advanced)
-# ----------------------------
 
-EXTRA_CFLAGS        ?= -pedantic -std=c89
-#USE_FLASH_FUNCTIONS ?= YES|NO
-#OUTPUT_MAP          ?= YES|NO
-#ARCHIVED            ?= YES|NO
-OPT_MODE            ?= -Os
-#SRCDIR              ?= src
-#OBJDIR              ?= obj
-#BINDIR              ?= bin
-#GFXDIR              ?= src/gfx
-#V                   ?= 1
+ifndef CEDEV
+$(error CEDEV environment path variable is not set)
+endif
 
 include $(CEDEV)/meta/makefile.mk
+
