@@ -2,7 +2,7 @@
 # Makefile Options
 # ----------------------------
 
-NAME ?= DEMO
+NAME ?= SNAKE
 ICON ?= icon.png
 DESCRIPTION ?= "ya know... snake"
 COMPRESSED ?= NO
