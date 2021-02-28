@@ -4,7 +4,7 @@ Programs for the TI-84 Plus CE graphing calculator
 ## Programs
 
 ### Snake
-![Snake](https://i.imgur.com/9bsFf32.gif)
+![Snake](https://imgur.com/xnF1BjJ.png)
 
 ## Installtion
 Send the `.8xp` file as well as the [C libraries](https://github.com/CE-Programming/libraries/releases) over to your calculator using either TI Connect™ CE or TILP
