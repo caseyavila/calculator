@@ -32,6 +32,7 @@ void apple_spawn(Segment *snake, Apple *apple);
 
 int main(void) {
     int game_over = 0;
+    int length = 1;
     sk_key_t key;
     Segment *snake = (Segment *) malloc(sizeof(Segment));
     enum Direction direction = RIGHT;
@@ -96,9 +97,20 @@ int main(void) {
                 break;
             case 2:
                 apple_spawn(snake, &apple);
+                length++;
                 break;
         }
     }
+
+    /* Game over screen */
+    gfx_SetTextTransparentColor(0);
+    gfx_SetTextBGColor(0);
+    gfx_SetTextFGColor(255);
+    gfx_PrintStringXY("Your score: ", 118, 100);
+    gfx_PrintInt(length, 0);
+    gfx_PrintStringXY("Casey Avila", 233, 220);
+
+    while (!os_GetCSC());
 
     gfx_End();
     return 0;
