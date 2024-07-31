@@ -110,7 +110,7 @@ int main(void) {
     gfx_PrintInt(length, 0);
     gfx_PrintStringXY("Casey Avila", 233, 220);
 
-    while (!os_GetCSC());
+    while (os_GetCSC() != sk_Enter);
 
     gfx_End();
     return 0;
